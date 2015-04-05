@@ -16,16 +16,16 @@
 
 (deftest win-test
   (testing "return true in all the eight possible cases of victory"
-    (is (true? (win? "x--x--x--" \x)))
-    (is (true? (win? "-x--x--x-" \x)))
-    (is (true? (win? "--x--x--x" \x)))
-    (is (true? (win? "x---x---x" \x)))
-    (is (true? (win? "--x-x-x--" \x)))
-    (is (true? (win? "xxx------" \x)))
-    (is (true? (win? "---xxx---" \x)))
-    (is (true? (win? "------xxx" \x))))
+    (is (true? (win? "x--x--x--")))
+    (is (true? (win? "-o--o--o-")))
+    (is (true? (win? "--x--x--x")))
+    (is (true? (win? "x---x---x")))
+    (is (true? (win? "--o-o-o--")))
+    (is (true? (win? "ooo------")))
+    (is (true? (win? "---xxx---")))
+    (is (true? (win? "------ooo"))))
   (testing "return false if does not match one of the eight possible cases of victory"
-    (is (nil? (win? "x--0--x--" \x)))))
+    (is (nil? (win? "x--o--x--")))))
 
 (deftest draw-test
   (testing "returns true if the game is a drawn"
@@ -34,3 +34,11 @@
     (is (false? (draw? "oxo--o-ox"))))
   (testing "returns true if the game is new"
     (is (false? (draw? (new-board))))))
+
+(deftest input-test
+  (testing "inputs into a new board"
+    (is (= "--x------" (input (new-board) 2 \x))))
+  (testing "inputs into an almost full board"
+    (is (= "-xo-oxxox" (input "-xo-ox-ox" 6 \x))))
+  (testing "cant overwrite a filled field"
+    (is (false? (input "-xo-ox-ox" 4 \x)))))
