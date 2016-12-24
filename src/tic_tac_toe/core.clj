@@ -14,24 +14,24 @@
              (map-indexed vector board))))
 
 (defn win? [board]
-  (def winner '(true true true))
-  (some true?
-        [(= winner (map (fn [x] (.contains (matches \x board) x)) [0 3 6]))
-         (= winner (map (fn [x] (.contains (matches \x board) x)) [1 4 7]))
-         (= winner (map (fn [x] (.contains (matches \x board) x)) [2 5 8]))
-         (= winner (map (fn [x] (.contains (matches \x board) x)) [0 4 8]))
-         (= winner (map (fn [x] (.contains (matches \x board) x)) [2 4 6]))
-         (= winner (map (fn [x] (.contains (matches \x board) x)) [0 1 2]))
-         (= winner (map (fn [x] (.contains (matches \x board) x)) [3 4 5]))
-         (= winner (map (fn [x] (.contains (matches \x board) x)) [6 7 8]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [0 3 6]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [1 4 7]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [2 5 8]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [0 4 8]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [2 4 6]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [0 1 2]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [3 4 5]))
-         (= winner (map (fn [x] (.contains (matches \o board) x)) [6 7 8]))]))
+  (let [winner '(true true true)]
+    (some true?
+          [(= winner (map (fn [x] (.contains (matches \x board) x)) [0 3 6]))
+           (= winner (map (fn [x] (.contains (matches \x board) x)) [1 4 7]))
+           (= winner (map (fn [x] (.contains (matches \x board) x)) [2 5 8]))
+           (= winner (map (fn [x] (.contains (matches \x board) x)) [0 4 8]))
+           (= winner (map (fn [x] (.contains (matches \x board) x)) [2 4 6]))
+           (= winner (map (fn [x] (.contains (matches \x board) x)) [0 1 2]))
+           (= winner (map (fn [x] (.contains (matches \x board) x)) [3 4 5]))
+           (= winner (map (fn [x] (.contains (matches \x board) x)) [6 7 8]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [0 3 6]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [1 4 7]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [2 5 8]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [0 4 8]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [2 4 6]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [0 1 2]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [3 4 5]))
+           (= winner (map (fn [x] (.contains (matches \o board) x)) [6 7 8]))])))
 
 (defn draw? [board]
   (and (< (count (matches \- board)) 3)
