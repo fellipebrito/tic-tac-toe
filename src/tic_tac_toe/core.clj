@@ -39,9 +39,13 @@
        (not (win? (str/replace board "-" "o")))))
 
 (defn input [board place player]
-  (if (= \- (get board place))
-    (str (subs board 0 place) player (subs board (inc place)))
-    false))
+  (str (subs board 0 place) player (subs board (inc place))))
+
+(defn valid-input? [input board]
+  (and
+    (>= input 0)
+    (<= input 8)
+    (= \- (get board input))))
 
 (defn -main []
   (println "====++++====\nTIC TAC TOE\n====++++====")
@@ -51,12 +55,17 @@
     (print-board board)
     (println "\n")
     (println "------------------------\nIt is player [" player "]'s"
-             "turn.\nPick your place: [0 1 2 3]")
+             "turn.\nPick your place using one number between 0 and 8")
     (if (win? board)
       (println "You Win!")
       (if (draw? board)
         (println "Draw!")
-        (recur (input board (Integer. (read-line)) player)
-               (if (= \x player) \o \x))))))
-
-;; validate user input (it should be a integer < 9)
+        (let [user-input (Integer. (read-line))]
+          (if (valid-input? user-input board)
+            (recur (input board user-input player)
+                   (if (= \x player) \o \x))
+            (do
+              (print (str (char 27) "[2J"))
+              (println user-input " is an invalid movement. Try again.")
+              (recur board
+                     player))))))))

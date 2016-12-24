@@ -2,6 +2,8 @@
   (:require [clojure.test :refer :all]
             [tic-tac-toe.core :refer :all]))
 
+(def empty-board "---------")
+
 (deftest new-board-test
   (testing "generates a new board"
     (is (= (new-board) "---------"))))
@@ -35,10 +37,22 @@
   (testing "returns true if the game is new"
     (is (false? (draw? (new-board))))))
 
+(deftest valid-input-test
+  (testing "The input number is >= 0"
+    (is (true? (valid-input? 0 empty-board)))
+    (is (true? (valid-input? 5 empty-board)))
+    (is (false? (valid-input? -15 empty-board))))
+  (testing "The input number is <= 8"
+    (is (true? (valid-input? 5 empty-board)))
+    (is (true? (valid-input? 8 empty-board)))
+    (is (false? (valid-input? 15 empty-board))))
+  (testing "The place is not taken yet"
+    (is (false? (valid-input? 0 "x--------")))
+    (is (false? (valid-input? 8 "--------x")))
+    (is (true? (valid-input? 5 "oxoxo-xox")))))
+
 (deftest input-test
   (testing "inputs into a new board"
     (is (= "--x------" (input (new-board) 2 \x))))
   (testing "inputs into an almost full board"
-    (is (= "-xo-oxxox" (input "-xo-ox-ox" 6 \x))))
-  (testing "cant overwrite a filled field"
-    (is (false? (input "-xo-ox-ox" 4 \x)))))
+    (is (= "-xo-oxxox" (input "-xo-ox-ox" 6 \x)))))
