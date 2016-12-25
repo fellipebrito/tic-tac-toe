@@ -26,15 +26,15 @@
     (is (true? (win? "ooo------")))
     (is (true? (win? "---xxx---")))
     (is (true? (win? "------ooo"))))
-  (testing "return false if does not match one of the eight possible cases of victory"
+  (testing "false if does not match one of the eight possible cases of victory"
     (is (nil? (win? "x--o--x--")))))
 
 (deftest draw-test
-  (testing "returns true if the game is a drawn"
+  (testing "true if the game is a drawn"
     (is (true?  (draw? "oxoxxo-ox"))))
-  (testing "returns false if the game has at least 3 empty spots"
+  (testing "false if the game has at least 3 empty spots"
     (is (false? (draw? "oxo--o-ox"))))
-  (testing "returns true if the game is new"
+  (testing "true if the game is new"
     (is (false? (draw? (new-board))))))
 
 (deftest valid-input-test
@@ -56,3 +56,8 @@
     (is (= "--x------" (input (new-board) 2 \x))))
   (testing "inputs into an almost full board"
     (is (= "-xo-oxxox" (input "-xo-ox-ox" 6 \x)))))
+
+;; (deftest start-test
+;;   (testing "start of the game"
+;;     (is (= (with-in-str "3" (start))
+;;            "\n\n---\n---\n---\n\n\n" "---\n---\n---\n"))))

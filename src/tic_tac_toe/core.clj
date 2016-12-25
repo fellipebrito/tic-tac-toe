@@ -5,9 +5,11 @@
 (defn new-board [] "---------")
 
 (defn print-board [board]
+  (println "\n")
   (println (str/join "\n" [(subs board 0 3)
                            (subs board 3 6)
-                           (subs board 6 9)])))
+                           (subs board 6 9)]))
+  (println "\n"))
 
 (defn matches [matcher board]
   (map first (filter #(= (second %) matcher)
@@ -34,9 +36,9 @@
            (= winner (map (fn [x] (.contains (matches \o board) x)) [6 7 8]))])))
 
 (defn draw? [board]
-  (and (< (count (matches \- board)) 3)
-       (not (win? (str/replace board "-" "x")))
-       (not (win? (str/replace board "-" "o")))))
+  (if (< (count (matches \- board)) 3)
+    (not (win? (str/replace board "-" "x")))
+    (not (win? (str/replace board "-" "o")))))
 
 (defn input [board place player]
   (str (subs board 0 place) player (subs board (inc place))))
@@ -47,13 +49,10 @@
     (<= input 8)
     (= \- (get board input))))
 
-(defn -main []
-  (println "====++++====\nTIC TAC TOE\n====++++====")
+(defn start []
   (loop [board  (new-board)
          player \x]
-    (println "\n")
     (print-board board)
-    (println "\n")
     (println "------------------------\nIt is player [" player "]'s"
              "turn.\nPick your place using one number between 0 and 8")
     (if (win? board)
@@ -65,7 +64,10 @@
             (recur (input board user-input player)
                    (if (= \x player) \o \x))
             (do
-              (print (str (char 27) "[2J"))
               (println user-input " is an invalid movement. Try again.")
               (recur board
-                     player))))))))
+                     player))))))) )
+
+(defn -main []
+  (println "====++++====\nTIC TAC TOE\n====++++====")
+  (start))
