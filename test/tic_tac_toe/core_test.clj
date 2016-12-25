@@ -10,7 +10,20 @@
 
 (deftest print-board-test
   (testing "print the current board"
-    (is (= (with-out-str (print-board (new-board))) "---\n---\n---\n"))))
+    (is (= (with-out-str (print-board (new-board))) "\n\n---\n---\n---\n\n\n"))))
+
+(deftest input-test
+  (testing "adds an x to the bottom left corner"
+    (is (= "------x--" (input empty-board 6 \x))))
+  (testing "adds an x to the upper left corner"
+    (is (= "x--------" (input empty-board 0 \x))))
+  (testing "adds an x to the bottom right corner"
+    (is (= "--------x" (input empty-board 8 \x))))
+  (testing "adds an x to the upper right corner"
+    (is (= "--x------" (input empty-board 2 \x))))
+  (testing "adds an x to the center"
+    (is (= "----x----" (input empty-board 4 \x)))))
+
 
 (deftest matches-test
   (testing "find all matches of a matcher in a given board"
@@ -35,9 +48,19 @@
   (testing "false if the game has at least 3 empty spots"
     (is (false? (draw? "oxo--o-ox"))))
   (testing "true if the game is new"
-    (is (false? (draw? (new-board))))))
+    (is (false? (draw? empty-board)))))
+
+(deftest to-integer-test
+  (testing "Returns the first integer found only if the first char is an integer"
+    (is (= 1 (to-integer "1abc")))
+    (is (nil? (to-integer "abc1")))
+    (is (nil? (to-integer "abc1")))))
 
 (deftest valid-input-test
+  (testing "The input is an integer"
+    (is (true? (valid-input? 1 empty-board)))
+    (is (false? (valid-input? nil empty-board)))
+    (is (false? (valid-input? "1" empty-board))))
   (testing "The input number is >= 0"
     (is (true? (valid-input? 0 empty-board)))
     (is (true? (valid-input? 5 empty-board)))
@@ -51,13 +74,24 @@
     (is (false? (valid-input? 8 "--------x")))
     (is (true? (valid-input? 5 "oxoxo-xox")))))
 
-(deftest input-test
-  (testing "inputs into a new board"
-    (is (= "--x------" (input (new-board) 2 \x))))
-  (testing "inputs into an almost full board"
-    (is (= "-xo-oxxox" (input "-xo-ox-ox" 6 \x)))))
+(deftest move-test
+  (testing "First movement of the game"
+    (is (= ["x--------" \o] (move 0 empty-board \x))))
+  (testing "Changes to the next player"
+    (is (= ["ooxox----" \x] (move 0 "-oxox----" \o))))
+  (testing "An invalid movement"
+    (is (= ["xox------" \o] (move 0 "xox------" \o)))))
 
-;; (deftest start-test
-;;   (testing "start of the game"
-;;     (is (= (with-in-str "3" (start))
-;;            "\n\n---\n---\n---\n\n\n" "---\n---\n---\n"))))
+(deftest end-of-the-game-test
+  (testing "It is a win"
+    (is (true? (end-of-the-game? "xxx------"))))
+  (testing "It is a drawn"
+    (is (true? (end-of-the-game? "oxoxxo-ox"))))
+  (testing "It is a drawn"
+    (is (true? (end-of-the-game? "oxoxxo-ox")))))
+
+(deftest start-test
+  (testing "It is a win"
+    (is (nil? (with-in-str "0\n1\n2\n3\n4\n5\n6\n" (-main)))))
+  (testing "It is a win"
+    (is (nil? (with-in-str "0\n1\n2\n3\n4\n5\n6\n" (start))))))

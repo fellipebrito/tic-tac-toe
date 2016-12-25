@@ -43,11 +43,45 @@
 (defn input [board place player]
   (str (subs board 0 place) player (subs board (inc place))))
 
-(defn valid-input? [input board]
+(def not-nil? (complement nil?))
+
+(defn to-integer
+  "Return the first integer found if the first char is an integer
+  otherwise return false"
+  [input]
+  (if-let [integer (re-find #"\A-?\d+" input)]
+    (Integer. integer)))
+
+(defn valid-input?
+  "User input has to be an Integer, respect the board size
+  and the place has to be empty"
+  [user-input board]
   (and
-    (>= input 0)
-    (<= input 8)
-    (= \- (get board input))))
+    (not-nil? user-input)
+    (integer? user-input)
+    (>= user-input 0)
+    (<= user-input 8)
+    (= \- (get board user-input))))
+
+(defn move
+  "Try to perform the user movement.
+  Returns the current board and player"
+  [user-input board player]
+  (if (valid-input? user-input board)
+    [(input board user-input player) (if (= \x player) \o \x)]
+    (do
+      (println user-input " is an invalid movement. Try again.")
+      [board player])))
+
+(defn end-of-the-game? [board]
+  (if (win? board)
+    (do
+      (println "You Win!")
+      true)
+    (if (draw? board)
+      (do
+        (println "Draw!")
+        true))))
 
 (defn start []
   (loop [board  (new-board)
@@ -55,18 +89,9 @@
     (print-board board)
     (println "------------------------\nIt is player [" player "]'s"
              "turn.\nPick your place using one number between 0 and 8")
-    (if (win? board)
-      (println "You Win!")
-      (if (draw? board)
-        (println "Draw!")
-        (let [user-input (Integer. (read-line))]
-          (if (valid-input? user-input board)
-            (recur (input board user-input player)
-                   (if (= \x player) \o \x))
-            (do
-              (println user-input " is an invalid movement. Try again.")
-              (recur board
-                     player))))))) )
+    (if (not (end-of-the-game? board))
+      (let [[board player] (move (to-integer (read-line)) board player)]
+        (recur board player)))))
 
 (defn -main []
   (println "====++++====\nTIC TAC TOE\n====++++====")
