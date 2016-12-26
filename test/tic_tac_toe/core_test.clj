@@ -84,14 +84,11 @@
 
 (deftest end-of-the-game-test
   (testing "It is a win"
-    (is (true? (end-of-the-game? "xxx------"))))
+    (is (= (with-out-str (end-of-the-game? "xxx------"))) "You Win!"))
   (testing "It is a drawn"
-    (is (true? (end-of-the-game? "oxoxxo-ox"))))
-  (testing "It is a drawn"
-    (is (true? (end-of-the-game? "oxoxxo-ox")))))
+    (is (= (with-out-str (end-of-the-game? "oxoxxo-ox"))) "Draw!")))
 
 (deftest start-test
   (testing "It is a win"
-    (is (nil? (with-in-str "0\n1\n2\n3\n4\n5\n6\n" (-main)))))
-  (testing "It is a win"
-    (is (nil? (with-in-str "0\n1\n2\n3\n4\n5\n6\n" (start))))))
+    (is (.contains (with-out-str (with-in-str "0\n1\n2\n3\n4\n5\n6\n" (-main)))
+                   "You Win!"))))
