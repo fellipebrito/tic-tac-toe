@@ -4,10 +4,6 @@
 
 (def empty-board "---------")
 
-(deftest printable-board-test
-  (testing "print the current board"
-    (is (= (printable-board "---------") ["---" "---" "---"]))))
-
 (deftest input-test
   (testing "adds an x to the bottom left corner"
     (is (= "------x--" (perform-move empty-board 6 \x))))
@@ -20,27 +16,6 @@
   (testing "adds an x to the center"
     (is (= "----x----" (perform-move empty-board 4 \x)))))
 
-
-(deftest winner-test
-  (testing "return true in all the eight possible cases of victory"
-    (is (true? (winner? "x--x--x--")))
-    (is (true? (winner? "-o--o--o-")))
-    (is (true? (winner? "--x--x--x")))
-    (is (true? (winner? "x---x---x")))
-    (is (true? (winner? "--o-o-o--")))
-    (is (true? (winner? "ooo------")))
-    (is (true? (winner? "---xxx---")))
-    (is (true? (winner? "------ooo"))))
-  (testing "false if does not match one of the eight possible cases of victory"
-    (is (nil? (winner? "x--o--x--")))))
-
-(deftest game-over-test
-  (testing "true if the game is over"
-    (is (true?  (game-over? "oxoxxo-ox"))))
-  (testing "false if the game has at least 3 empty spots"
-    (is (false? (game-over? "oxo--o-ox"))))
-  (testing "true if the game is new"
-    (is (false? (game-over? empty-board)))))
 
 (deftest first-to-integer-test
   (testing "Returns the first integer found only if the first char is an integer"
@@ -73,12 +48,6 @@
     (is (= ["ooxox----" \x] (move 0 "-oxox----" \o))))
   (testing "An invalid movement"
     (is (= ["xox------" \o] (move 0 "xox------" \o)))))
-
-(deftest end-of-the-game-test
-  (testing "It is a win"
-    (is (= (with-out-str (end-of-the-game? "xxx------")) "You Win!\n")))
-  (testing "Game over"
-    (is (= (with-out-str (end-of-the-game? "oxoxxo-ox")) "Game Over!\n"))))
 
 (deftest start-test
   (testing "It is a win"
