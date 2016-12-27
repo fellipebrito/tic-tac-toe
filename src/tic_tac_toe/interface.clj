@@ -6,6 +6,7 @@
   (vec (re-seq #".{1,3}" board)))
 
 (defn print-interface
+  "Print the board and a message to the user"
   [board player]
   (run! println (printable-board board))
   (println "------------------------\nIt is player [" player "]'s"
