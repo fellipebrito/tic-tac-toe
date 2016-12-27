@@ -12,6 +12,14 @@
   (if-let [integer (re-find #"\A-?\d+" input)]
     (Integer. integer)))
 
+(defn play
+  " Ask for MOVE
+  Have two different methods AI/Human Move
+  If Human: Prompt / Else: Move"
+  [board player]
+  (let [place (first-integer (read-line))]
+    (move/move place board player)))
+
 (defn start
   "- Present the board
   - Verify if it is the end of the game
@@ -23,7 +31,7 @@
          player \x]
     (interface/print-interface board player)
     (if (not (rules/end-of-the-game? board))
-      (let [[board player] (move/move (first-integer (read-line)) board player)]
+      (let [[board player] (play board player)]
         (recur board player)))))
 
 (defn -main []
