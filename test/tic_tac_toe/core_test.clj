@@ -6,7 +6,7 @@
 
 (deftest printable-board-test
   (testing "print the current board"
-    (is (= (printable-board "---------")) "---------")))
+    (is (= (printable-board "---------") ["---" "---" "---"]))))
 
 (deftest input-test
   (testing "adds an x to the bottom left corner"
@@ -76,9 +76,9 @@
 
 (deftest end-of-the-game-test
   (testing "It is a win"
-    (is (= (with-out-str (end-of-the-game? "xxx------"))) "You Win!"))
+    (is (= (with-out-str (end-of-the-game? "xxx------")) "You Win!\n")))
   (testing "Game over"
-    (is (= (with-out-str (end-of-the-game? "oxoxxo-ox"))) "Game Over!")))
+    (is (= (with-out-str (end-of-the-game? "oxoxxo-ox")) "Game Over!\n"))))
 
 (deftest start-test
   (testing "It is a win"

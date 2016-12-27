@@ -36,7 +36,7 @@
     (do (println "You Win!")
         true)
     (if (game-over? board)
-      (do (println "Game Over")
+      (do (println "Game Over!")
           true))))
 
 ;; USER INPUT - VALIDATION
