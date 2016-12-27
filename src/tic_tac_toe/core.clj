@@ -2,50 +2,47 @@
   (:require [clojure.string :as str])
   (:gen-class))
 
-(defn new-board [] "---------")
+;; PRINT
+(defn printable-board
+  "Get the board ready to be printed"
+  [board]
+  (vec (re-seq #".{1,3}" board)))
 
-(defn print-board [board]
-  (println "\n")
-  (println (str/join "\n" [(subs board 0 3)
-                           (subs board 3 6)
-                           (subs board 6 9)]))
-  (println "\n"))
+(defn print-interface
+  [board player]
+  (run! println (printable-board board))
+  (println "------------------------\nIt is player [" player "]'s"
+           "turn.\nPick your place using one number between 0 and 8"))
 
-(defn matches [matcher board]
-  (map first (filter #(= (second %) matcher)
-             (map-indexed vector board))))
+;; VERIFY GAME STATUS
+(def possible-win-scenarios
+  [[0 3 6] [1 4 7] [2 5 8] [0 4 8] [2 4 6] [0 1 2] [3 4 5] [6 7 8]])
 
-(defn win? [board]
-  (let [winner '(true true true)]
-    (some true?
-          [(= winner (map (fn [x] (.contains (matches \x board) x)) [0 3 6]))
-           (= winner (map (fn [x] (.contains (matches \x board) x)) [1 4 7]))
-           (= winner (map (fn [x] (.contains (matches \x board) x)) [2 5 8]))
-           (= winner (map (fn [x] (.contains (matches \x board) x)) [0 4 8]))
-           (= winner (map (fn [x] (.contains (matches \x board) x)) [2 4 6]))
-           (= winner (map (fn [x] (.contains (matches \x board) x)) [0 1 2]))
-           (= winner (map (fn [x] (.contains (matches \x board) x)) [3 4 5]))
-           (= winner (map (fn [x] (.contains (matches \x board) x)) [6 7 8]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [0 3 6]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [1 4 7]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [2 5 8]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [0 4 8]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [2 4 6]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [0 1 2]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [3 4 5]))
-           (= winner (map (fn [x] (.contains (matches \o board) x)) [6 7 8]))])))
+(defn test-possible-scenarios [board]
+  (map (fn [player]
+         (map #(every? #{player} %)
+              (map (fn [x] (map #(get board  %) x))
+                   possible-win-scenarios)))
+       [\x \o]))
 
-(defn draw? [board]
-  (if (< (count (matches \- board)) 3)
-    (not (win? (str/replace board "-" "x")))
-    (not (win? (str/replace board "-" "o")))))
+(defn winner? [board]
+  (some true? (flatten (test-possible-scenarios board))))
 
-(defn input [board place player]
-  (str (subs board 0 place) player (subs board (inc place))))
+(defn game-over? [board]
+  (not-any? winner? (map #(str/replace board "-" %) ["x" "o"])))
 
+(defn end-of-the-game? [board]
+  (if (winner? board)
+    (do (println "You Win!")
+        true)
+    (if (game-over? board)
+      (do (println "Game Over")
+          true))))
+
+;; USER INPUT - VALIDATION
 (def not-nil? (complement nil?))
 
-(defn to-integer
+(defn first-to-integer
   "Return the first integer found if the first char is an integer
   otherwise return false"
   [input]
@@ -63,34 +60,26 @@
     (<= user-input 8)
     (= \- (get board user-input))))
 
+;; MOVE
+(defn perform-move [board place player]
+  (str (subs board 0 place) player (subs board (inc place))))
+
 (defn move
   "Try to perform the user movement.
   Returns the current board and player"
   [user-input board player]
   (if (valid-input? user-input board)
-    [(input board user-input player) (if (= \x player) \o \x)]
-    (do
-      (println user-input " is an invalid movement. Try again.")
-      [board player])))
+    [(perform-move board user-input player) (if (= \x player) \o \x)]
+    (do (println user-input " is an invalid movement. Try again.")
+        [board player])))
 
-(defn end-of-the-game? [board]
-  (if (win? board)
-    (do
-      (println "You Win!")
-      true)
-    (if (draw? board)
-      (do
-        (println "Draw!")
-        true))))
-
+;; EXECUTE THE GAME
 (defn start []
-  (loop [board  (new-board)
+  (loop [board  (apply str (repeat 9 "-"))
          player \x]
-    (print-board board)
-    (println "------------------------\nIt is player [" player "]'s"
-             "turn.\nPick your place using one number between 0 and 8")
+    (print-interface board player)
     (if (not (end-of-the-game? board))
-      (let [[board player] (move (to-integer (read-line)) board player)]
+      (let [[board player] (move (first-to-integer (read-line)) board player)]
         (recur board player)))))
 
 (defn -main []

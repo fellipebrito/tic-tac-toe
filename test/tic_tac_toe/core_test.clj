@@ -4,57 +4,49 @@
 
 (def empty-board "---------")
 
-(deftest new-board-test
-  (testing "generates a new board"
-    (is (= (new-board) "---------"))))
-
-(deftest print-board-test
+(deftest printable-board-test
   (testing "print the current board"
-    (is (= (with-out-str (print-board (new-board))) "\n\n---\n---\n---\n\n\n"))))
+    (is (= (printable-board "---------")) "---------")))
 
 (deftest input-test
   (testing "adds an x to the bottom left corner"
-    (is (= "------x--" (input empty-board 6 \x))))
+    (is (= "------x--" (perform-move empty-board 6 \x))))
   (testing "adds an x to the upper left corner"
-    (is (= "x--------" (input empty-board 0 \x))))
+    (is (= "x--------" (perform-move empty-board 0 \x))))
   (testing "adds an x to the bottom right corner"
-    (is (= "--------x" (input empty-board 8 \x))))
+    (is (= "--------x" (perform-move empty-board 8 \x))))
   (testing "adds an x to the upper right corner"
-    (is (= "--x------" (input empty-board 2 \x))))
+    (is (= "--x------" (perform-move empty-board 2 \x))))
   (testing "adds an x to the center"
-    (is (= "----x----" (input empty-board 4 \x)))))
+    (is (= "----x----" (perform-move empty-board 4 \x)))))
 
 
-(deftest matches-test
-  (testing "find all matches of a matcher in a given board"
-    (is (= '(0 2 4 8) (matches \x "x-x-x---x")))))
-
-(deftest win-test
+(deftest winner-test
   (testing "return true in all the eight possible cases of victory"
-    (is (true? (win? "x--x--x--")))
-    (is (true? (win? "-o--o--o-")))
-    (is (true? (win? "--x--x--x")))
-    (is (true? (win? "x---x---x")))
-    (is (true? (win? "--o-o-o--")))
-    (is (true? (win? "ooo------")))
-    (is (true? (win? "---xxx---")))
-    (is (true? (win? "------ooo"))))
+    (is (true? (winner? "x--x--x--")))
+    (is (true? (winner? "-o--o--o-")))
+    (is (true? (winner? "--x--x--x")))
+    (is (true? (winner? "x---x---x")))
+    (is (true? (winner? "--o-o-o--")))
+    (is (true? (winner? "ooo------")))
+    (is (true? (winner? "---xxx---")))
+    (is (true? (winner? "------ooo"))))
   (testing "false if does not match one of the eight possible cases of victory"
-    (is (nil? (win? "x--o--x--")))))
+    (is (nil? (winner? "x--o--x--")))))
 
-(deftest draw-test
-  (testing "true if the game is a drawn"
-    (is (true?  (draw? "oxoxxo-ox"))))
+(deftest game-over-test
+  (testing "true if the game is over"
+    (is (true?  (game-over? "oxoxxo-ox"))))
   (testing "false if the game has at least 3 empty spots"
-    (is (false? (draw? "oxo--o-ox"))))
+    (is (false? (game-over? "oxo--o-ox"))))
   (testing "true if the game is new"
-    (is (false? (draw? empty-board)))))
+    (is (false? (game-over? empty-board)))))
 
-(deftest to-integer-test
+(deftest first-to-integer-test
   (testing "Returns the first integer found only if the first char is an integer"
-    (is (= 1 (to-integer "1abc")))
-    (is (nil? (to-integer "abc1")))
-    (is (nil? (to-integer "abc1")))))
+    (is (= 1 (first-to-integer "1abc")))
+    (is (nil? (first-to-integer "abc1")))
+    (is (nil? (first-to-integer "abc1")))))
 
 (deftest valid-input-test
   (testing "The input is an integer"
@@ -85,8 +77,8 @@
 (deftest end-of-the-game-test
   (testing "It is a win"
     (is (= (with-out-str (end-of-the-game? "xxx------"))) "You Win!"))
-  (testing "It is a drawn"
-    (is (= (with-out-str (end-of-the-game? "oxoxxo-ox"))) "Draw!")))
+  (testing "Game over"
+    (is (= (with-out-str (end-of-the-game? "oxoxxo-ox"))) "Game Over!")))
 
 (deftest start-test
   (testing "It is a win"
