@@ -13,12 +13,13 @@
     (Integer. integer)))
 
 (defn play
-  " Ask for MOVE
+  "Ask for MOVE
   Have two different methods AI/Human Move
   If Human: Prompt / Else: Move"
   [board player]
-  (let [place (first-integer (read-line))]
-    (move/move place board player)))
+  (if (= player \x)
+    (move/move (first-integer (read-line)) board player)
+    (move/move (rand-int 8) board player)))
 
 (defn start
   "- Present the board
